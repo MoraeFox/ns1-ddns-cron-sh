@@ -3,7 +3,7 @@
 
 #Configuration
 WAN="igc0"
-DD_SCRIPT_PATH="/root/fox"
+DD_SCRIPT_PATH="$PWD"
 TEMP_NEW_IP_FILE="$DD_SCRIPT_PATH/newip.txt"
 IP_SAVE_FILE="$DD_SCRIPT_PATH/currentip.txt"
 
@@ -26,6 +26,8 @@ NS1_A_RECORD_UPDATE() {
 }
 
 
+#Check presence of needed files
+# T B D
 
 #Current IP check process
 echo "You were using ip "

@@ -25,15 +25,51 @@ NS1_A_RECORD_UPDATE() {
     echo "$(date): $response" >> $DD_SCRIPT_PATH/log.txt
 }
 
+IP_ECHO_EXT_API(){
+
+	echo "Checking your IP shown to httpbin..."
+	CURRENT_IP=$(curl -s http://httpbin.org/ip | jq -r '.origin')
+	echo "IP = $CURRENT_IP"
+
+}
+
+IP_ECHO_WAN_CHECK(){
+
+	echo "Checking WAN IP address..."
+	CURRENT_IP=$(ifconfig $WAN | grep 'inet' | grep -v 'inet6' | awk -F ' ' '{ print $2 }')
+	echo "IP = $(CURRENT_IP)"
+
+}
+
+
+CHECK_IP(){
+
+	#Use this when script is running on top level firewall
+	#IP_ECHO_WAN_CHECK
+
+	#Use this when script is running on NATed system
+	IP_ECHO_EXT_API
+
+}
 
 #Check presence of needed files
 # T B D
 
 #Current IP check process
-echo "You were using ip "
+CURRNET_IP=""
+echo "Locally, you were using IP = "
 cat $IP_SAVE_FILE
-CURRENT_IP=$(ifconfig $WAN | grep 'inet' | grep -v 'inet6' | awk -F ' ' '{ print $2 }')
-echo "Current WAN IP = $CURRENT_IP"
+
+#2023/11/24 : Clearified IP get API TBD position
+#echo "Name server was using IP = "
+#TBD : sub0 ip return API
+#TBD : sub1 ip return API
+#TBD : sub2 ip return API
+#TBD : sub3 ip return API
+#...
+
+CHECK_IP
+echo "Current public IP = $CURRENT_IP"
 echo "$CURRENT_IP" > "$TEMP_NEW_IP_FILE"
 
 
@@ -43,7 +79,7 @@ if cmp -s "$IP_SAVE_FILE" "$TEMP_NEW_IP_FILE"; then
     IP_HAS_CHANGED=false
 else
     IP_HAS_CHANGED=true
-    echo "WAN IP has changed"
+    echo "Public IP has changed"
 fi
 
 

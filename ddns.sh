@@ -11,7 +11,7 @@ IP_SAVE_FILE="$DD_SCRIPT_PATH/currentip.txt"
 #NS specific
 NS1_API_KEY="YOUR_KEY"
 ZONE="YOUR_DOMAIN.com"
-DOMAIN="SUB_DOMAIN"
+DOMAIN="SUB_DOMAIN1 SUB_DOMAIN2 SUB_DOMAIN3"
 
 #Functions
 NS1_A_RECORD_UPDATE() {
@@ -87,10 +87,13 @@ fi
 
 #IP update process
 if [ "$IP_HAS_CHANGED" = "true" ]; then
-    echo "Requesting POST to NS1..."
-    echo "$(date): Request POST for IP : $CURRENT_IP" >> $DD_SCRIPT_PATH/log.txt
 
-    NS1_A_RECORD_UPDATE "$CURRENT_IP" "$ZONE" "$DOMAIN" "$NS1_API_KEY"
+	for THIS_SUBDOMAIN in $DOMAIN ; do
+		echo "Requesting POST to NS1..."
+		echo "$(date): Request POST for IP : $CURRENT_IP" >> $DD_SCRIPT_PATH/log.txt
+
+    		NS1_A_RECORD_UPDATE "$CURRENT_IP" "$ZONE" "$THIS_SUBDOMAIN" "$NS1_API_KEY"
+	done
 
     echo "$CURRENT_IP" > "$IP_SAVE_FILE"
 
